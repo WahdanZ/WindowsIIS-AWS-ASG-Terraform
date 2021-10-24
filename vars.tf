@@ -48,7 +48,7 @@ variable "iam_instance_profile" {
 
 variable "security_groups" {
   description = "A list of security group IDs to assign to the launch configuration"
-  type        = "list(string)"
+  type        = list(string)
   default = ["sg-xxxxxxxxxx", "sg-xxxxxxxxx"]
 }
 
@@ -61,7 +61,7 @@ variable "user_data_path" {
 
 variable "vpc_subnets_ids" {
   description = "A list of subnet IDs to associate with"
-  type        = "list(string)"
+  type        = list(string)
   default = ["subnet-xxxxxxxxxxx", "subnet-xxxxxxxxxxx"]
 }
 
