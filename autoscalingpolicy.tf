@@ -2,7 +2,7 @@
 
 resource "aws_autoscaling_policy" "cpu-policy" {
   name                   = "cpu-policy"
-  autoscaling_group_name = "${aws_autoscaling_group.Appds_asg.name}"
+  autoscaling_group_name = aws_autoscaling_group.Appds_asg.name
   adjustment_type        = "ChangeInCapacity"
   scaling_adjustment     = "1"
   cooldown               = "600"
@@ -21,17 +21,17 @@ resource "aws_cloudwatch_metric_alarm" "cpu-alarm" {
   threshold           = "75"
 
   dimensions = {
-    "AutoScalingGroupName" = "${aws_autoscaling_group.Appds_asg.name}"
+    "AutoScalingGroupName" = aws_autoscaling_group.Appds_asg.name
   }
 
   actions_enabled = true
-  alarm_actions   = ["${aws_autoscaling_policy.cpu-policy.arn}"]
+  alarm_actions   = [aws_autoscaling_policy.cpu-policy.arn]
 }
 
 # scale down alarm
 resource "aws_autoscaling_policy" "cpu-policy-scaledown" {
   name                   = "cpu-policy-scaledown"
-  autoscaling_group_name = "${aws_autoscaling_group.Appds_asg.name}"
+  autoscaling_group_name = aws_autoscaling_group.Appds_asg.name
   adjustment_type        = "ChangeInCapacity"
   scaling_adjustment     = "-1"
   cooldown               = "300"
@@ -50,9 +50,9 @@ resource "aws_cloudwatch_metric_alarm" "cpu-alarm-scaledown" {
   threshold           = "60"
 
   dimensions = {
-    "AutoScalingGroupName" = "${aws_autoscaling_group.Appds_asg.name}"
+    "AutoScalingGroupName" = aws_autoscaling_group.Appds_asg.name
   }
 
   actions_enabled = true
-  alarm_actions   = ["${aws_autoscaling_policy.cpu-policy-scaledown.arn}"]
+  alarm_actions   = [aws_autoscaling_policy.cpu-policy-scaledown.arn]
 }

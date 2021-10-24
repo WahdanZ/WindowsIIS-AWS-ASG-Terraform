@@ -1,10 +1,10 @@
 #TG
 # refer: https://www.terraform.io/docs/providers/aws/r/lb_target_group.html
 resource "aws_lb_target_group" "ag_target1" {
-  name     = "${var.ag_target}"
+  name     = var.ag_target
   port     = "80"
   protocol = "HTTP"
-  vpc_id   = "${var.vpc_id}"
+  vpc_id   = var.vpc_id
   health_check {
       interval = 30
       timeout  = 5
@@ -19,18 +19,18 @@ resource "aws_lb_target_group" "ag_target1" {
 
 resource "aws_lb" "alb_app" {
   name            = "alb-app"
-  subnets     = ["${var.vpc_subnets_ids}"]
+  subnets     = [var.vpc_subnets_ids]
   internal = true
-  security_groups = ["${var.security_groups}"]
+  security_groups = [var.security_groups]
 }
 
 resource "aws_lb_listener" "front_end_80" {
-  load_balancer_arn = "${aws_lb.alb_app.id}"
+  load_balancer_arn = aws_lb.alb_app.id
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
-    target_group_arn = "${aws_lb_target_group.ag_target1.arn}"
+    target_group_arn = aws_lb_target_group.ag_target1.arn
     type             = "forward"
   }
 }
