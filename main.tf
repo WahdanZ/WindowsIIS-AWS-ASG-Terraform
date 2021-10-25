@@ -23,7 +23,7 @@ resource "aws_launch_configuration" "launch_config" {
   image_id = var.image_id
   instance_type = var.instance_type
   key_name = var.key_name
-  security_groups  = [var.security_groups]
+  security_groups  = var.security_groups
   iam_instance_profile = var.iam_instance_profile
   # associate_public_ip_address = true 
   user_data = data.template_file.init.rendered
@@ -39,18 +39,16 @@ resource "aws_autoscaling_group" "Appds_asg" {
   # depends_on = ["aws_launch_configuration.launch_config"]
   name  = var.asg_name
 
-  tags = [concat(
-    list(
-      map("key", "Name", "value", var.lc_name, "propagate_at_launch", true),
-      map("key", "ResourceOwner", "value", "sai Doppalapudi ", "propagate_at_launch", true),
-      map("key", "CostCenter", "value", "78-900", "propagate_at_launch", true),
-      map("key", "Application", "value", "CLOUD-POC", "propagate_at_launch", true)
-    ))]
+  tags = tolist([tomap({"Name" = var.lc_name,"propagate_at_launch" = true }),
+    tomap({"ResourceOwner" = "sai Doppalapudi","propagate_at_launch" = true }),
+    tomap({"CostCenter" = "78-900","propagate_at_launch" = true }),
+    tomap({"Application" = "CLOUD-POC","propagate_at_launch" = true }),]
+    )
 
   # Uses the ID from the launch config created above or it can be launch_config.name
   launch_configuration = aws_launch_configuration.launch_config.id
 
-  vpc_zone_identifier  = [var.vpc_subnets_ids]
+  vpc_zone_identifier  = var.vpc_subnets_ids
 
   max_size = var.asg_max_number_of_instances
   min_size = var.asg_minimum_number_of_instances
@@ -79,7 +77,7 @@ resource "aws_autoscaling_group" "Appds_asg" {
 */
 
 resource "aws_route53_record" "cname_route53_record" {
-  depends_on = ["aws_lb.alb_app"]
+  depends_on = [aws_lb.alb_app]
   zone_id = var.DNSHostedZone_id # Replace with your zone ID
   name    = "dev.${var.DNSHostedZone}" # Replace with your name/domain/subdomain
   type    = "CNAME"

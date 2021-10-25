@@ -19,9 +19,9 @@ resource "aws_lb_target_group" "ag_target1" {
 
 resource "aws_lb" "alb_app" {
   name            = "alb-app"
-  subnets     = [var.vpc_subnets_ids]
+  subnets     = var.vpc_subnets_ids
   internal = true
-  security_groups = [var.security_groups]
+  security_groups = var.security_groups
 }
 
 resource "aws_lb_listener" "front_end_80" {
